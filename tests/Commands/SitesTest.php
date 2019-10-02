@@ -30,8 +30,8 @@ class SitesTest extends TestCase
 
         $output = $tester->getDisplay();
 
-        $this->assertContains('A site name', $output);
-        $this->assertContains('12345', $output);
+        $this->assertStringContainsString('A site name', $output);
+        $this->assertStringContainsString('12345', $output);
     }
 
     /** @test */
@@ -61,18 +61,31 @@ class SitesTest extends TestCase
             'site' => '6789',
         ]);
 
-        $this->assertContains('aborting', $tester->getDisplay());
+        $this->assertStringContainsString('aborting', $tester->getDisplay());
     }
 
     /** @test */
     public function it_deploys_a_site()
     {
         $this->forge->shouldReceive()
-            ->deploySite('12345', '6789');
+            ->deploySite('12345', '6789', false);
 
         $this->command(Deploy::class)->execute([
             'server' => '12345',
             'site' => '6789',
+        ]);
+    }
+    
+    /** @test */
+    public function it_deploys_a_site_and_waits_for_execution()
+    {
+        $this->forge->shouldReceive()
+            ->deploySite('12345', '6789', true);
+
+        $this->command(Deploy::class)->execute([
+            'server' => '12345',
+            'site' => '6789',
+            '--wait' => true,
         ]);
     }
 

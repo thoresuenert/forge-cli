@@ -3,12 +3,13 @@
 namespace Sven\ForgeCLI\Commands\Jobs;
 
 use Sven\ForgeCLI\Commands\BaseCommand;
+use Sven\ForgeCLI\Contracts\NeedsForge;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Make extends BaseCommand
+class Make extends BaseCommand implements NeedsForge
 {
     /**
      * @var array
@@ -37,6 +38,7 @@ class Make extends BaseCommand
             ->addOption('day', null, InputOption::VALUE_REQUIRED, 'The day to run the scheduled job on. Only required when using the "custom" frequency.', '*')
             ->addOption('month', null, InputOption::VALUE_REQUIRED, 'The month to run the scheduled job on. Only required when using the "custom" frequency.', '*')
             ->addOption('weekday', null, InputOption::VALUE_REQUIRED, 'The weekday to run the scheduled job on. Only required when using the "custom" frequency.', '*')
+            ->addOption('wait', null, InputOption::VALUE_OPTIONAL, 'Boolean if you want to wait for execution', false)
             ->setDescription('Schedule a new job on one of your servers.');
     }
 
@@ -52,7 +54,7 @@ class Make extends BaseCommand
         $this->forge->createJob(
             $input->getArgument('server'),
             $this->fillData($input->getOptions()),
-            false
+            ($input->getOption('wait') !== false)
         );
     }
 }

@@ -3,12 +3,13 @@
 namespace Sven\ForgeCLI\Commands\Sites;
 
 use Sven\ForgeCLI\Commands\BaseCommand;
+use Sven\ForgeCLI\Contracts\NeedsForge;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Make extends BaseCommand
+class Make extends BaseCommand implements NeedsForge
 {
     /**
      * @var array
@@ -29,6 +30,7 @@ class Make extends BaseCommand
             ->addOption('domain', null, InputOption::VALUE_REQUIRED, 'The domain of your new site.')
             ->addOption('type', null, InputOption::VALUE_REQUIRED, 'The type of application to install on the site. Can be either "php", "html", "Symfony", or "symfony_dev".', 'php')
             ->addOption('directory', null, InputOption::VALUE_REQUIRED, 'The base directory of the site.', '/public')
+            ->addOption('wait', null, InputOption::VALUE_OPTIONAL, 'Boolean if you want to wait for execution', false)
             ->setDescription('Create a new site on one of your servers.');
     }
 
@@ -40,7 +42,7 @@ class Make extends BaseCommand
         $this->forge->createSite(
             $input->getArgument('server'),
             $this->fillData($input->getOptions()),
-            false
+            ($input->getOption('wait') !== false)
         );
     }
 }
